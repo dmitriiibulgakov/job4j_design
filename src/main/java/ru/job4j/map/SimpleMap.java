@@ -68,7 +68,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
 
     @Override
     public Iterator<K> iterator() {
-        return new Iterator<K>() {
+        return new Iterator<>() {
             final int expectedModCount = modCount;
             int point = 0;
 
@@ -89,7 +89,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
                         .filter(Objects::nonNull)
                         .skip(point++)
                         .findFirst()
-                        .get()
+                        .orElseThrow()
                         .key;
             }
         };
