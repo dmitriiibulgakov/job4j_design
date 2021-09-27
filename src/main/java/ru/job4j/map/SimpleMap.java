@@ -70,14 +70,11 @@ public class SimpleMap<K, V> implements Map<K, V> {
     public Iterator<K> iterator() {
         return new Iterator<K>() {
             final int expectedModCount = modCount;
-            final MapEntry<K, V>[] tableWithoutNulls = Arrays.stream(table)
-                    .filter(Objects::nonNull)
-                    .toArray(MapEntry[]::new);
             int point = 0;
 
             @Override
             public boolean hasNext() {
-                return point < tableWithoutNulls.length;
+                return point < count;
             }
 
             @Override
@@ -88,7 +85,12 @@ public class SimpleMap<K, V> implements Map<K, V> {
                 if (expectedModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                return tableWithoutNulls[point++].key;
+                return Arrays.stream(table)
+                        .filter(Objects::nonNull)
+                        .skip(point++)
+                        .findFirst()
+                        .get()
+                        .key;
             }
         };
     }
